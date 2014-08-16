@@ -8,6 +8,7 @@ var app = express();
 
 ////////// authentication stuff
 // requires
+var cors = require('cors');
 var expressJwt = require('express-jwt');
 var jwt = require('jsonwebtoken');
 var bodyParser = require('body-parser');
@@ -20,16 +21,11 @@ var user = {
   password: 'p'
 };
 
+// parse json data coming from client (used on login)
 app.use(bodyParser.json());
 
 // setup cors
-app.use(function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
-  next();
-});
+app.use(cors());
 
 // setup jwt
 var jwtSecret = 'i3oifjda9302lr$#@05.';
