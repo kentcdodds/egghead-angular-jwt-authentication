@@ -5,8 +5,25 @@
   <title>Angular JWT Auth</title>
 </head>
 <body ng-controller="MainCtrl as vm">
-<h1>Hello {{vm.name}}!</h1>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.18/angular.js"></script>
+
+<div ng-hide="vm.user">
+  <h1>Login</h1>
+  <form ng-submit="vm.login(vm.username, vm.password)">
+    <label>Username: <input type="text" ng-model="vm.username" /></label><br />
+    <label>Password: <input type="password" ng-model="vm.password" /></label><br />
+    <button type="submit">Login</button>
+  </form>
+</div>
+
+<div ng-show="vm.user">
+  <h1>Welcome {{vm.user.username}}</h1>
+  <button type="button" ng-click="vm.logout()">Logout</button>
+  <hr />
+  <button type="button" ng-click="vm.getProtectedResource()">Get Random User</button>
+  <pre ng-bind="vm.protectedResource | json"></pre>
+</div>
+
+<script type="text/javascript" src="bower_components/angular/angular.js"></script>
 <script type="text/javascript" src="app.js"></script>
 </body>
 </html>
