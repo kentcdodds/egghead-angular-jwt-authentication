@@ -6,8 +6,10 @@
 </head>
 <body ng-controller="MainCtrl as vm">
 
+<h1>Get Random User Info</h1>
+
 <div ng-hide="vm.user">
-  <h1>Login</h1>
+  <h2>Login</h2>
   <form ng-submit="vm.login(vm.username, vm.password)">
     <label>Username: <input type="text" ng-model="vm.username" /></label><br />
     <label>Password: <input type="password" ng-model="vm.password" /></label><br />
@@ -16,11 +18,14 @@
 </div>
 
 <div ng-show="vm.user">
-  <h1>Welcome {{vm.user.username}}</h1>
+  <h2>Welcome {{vm.user.username}}</h2>
   <button type="button" ng-click="vm.logout()">Logout</button>
   <hr />
   <button type="button" ng-click="vm.getProtectedResource()">Get Random User</button>
-  <pre ng-bind="vm.protectedResource | json"></pre>
+  <div style="margin-top:14px;">
+    <img ng-src="{{vm.protectedResource.avatar}}" />
+    <pre ng-bind="vm.protectedResource | json"></pre>
+  </div>
 </div>
 
 <script type="text/javascript" src="bower_components/angular/angular.js"></script>

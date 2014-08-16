@@ -1,9 +1,12 @@
 (function() {
   'use strict';
+
   var app = angular.module('app', [], function config($httpProvider) {
     $httpProvider.interceptors.push('AuthInterceptor');
   });
+
   app.constant('API_URL', 'http://localhost:3000');
+
   app.controller('MainCtrl', function MainCtrl(UserFactory, RandomUserFactory) {
     'use strict';
     var vm = this;
@@ -43,7 +46,7 @@
     }
   });
 
-  app.factory('UserFactory', function LoginFactory($http, API_URL, AuthTokenFactory) {
+  app.factory('UserFactory', function LoginFactory($http, API_URL, $q, AuthTokenFactory) {
     'use strict';
     return {
       getUser: getUser,
@@ -52,7 +55,12 @@
     };
 
     function getUser() {
-      return $http.get(API_URL + '/me');
+      var token = AuthTokenFactory.getToken();
+      if (token) {
+        return $http.get(API_URL + '/me');
+      } else {
+        return $q.reject({ data: 'Client has no authentication token.' });
+      }
     }
 
     function login(username, password) {
@@ -107,8 +115,7 @@
   app.factory('AuthInterceptor', function AuthInterceptor(AuthTokenFactory) {
     'use strict';
     return {
-      request: addAuthToken,
-      response: handleUnauthenticated
+      request: addAuthToken
     };
 
     function addAuthToken(config) {
@@ -118,13 +125,6 @@
         config.headers.Authorization = 'Bearer ' + token;
       }
       return config;
-    }
-
-    function handleUnauthenticated(response) {
-      if (response.status === 403) {
-        console.warn('Not authorized');
-      }
-      return response;
     }
   });
 })();
