@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="app">
 <head lang="en">
   <meta charset="UTF-8">
   <title>Angular JWT Auth</title>
 </head>
-<body>
-<h1>Hello World!</h1>
+<body ng-controller="MainCtrl as vm">
+<h1>Hello {{vm.name}}!</h1>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.18/angular.js"></script>
+<script type="text/javascript" src="app.js"></script>
 </body>
 </html>
