@@ -8,9 +8,9 @@ var app = express();
 
 ////////// authentication stuff
 // requires
-var cookieParser = require('cookie-parser');
+var expressJwt = require('express-jwt');
+var jwt = require('jsonwebtoken');
 var bodyParser = require('body-parser');
-var session = require('express-session');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
@@ -20,16 +20,20 @@ var user = {
   password: 'p'
 };
 
-// cookie and session stuff
-app.use(cookieParser());
-app.use(session({
-  name: 'sessionId',
-  secret: 'fjkdfeiow389024!',
-  saveUninitialized: true,
-  resave: true
-}));
-
 app.use(bodyParser.json());
+
+// setup cors
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+  next();
+});
+
+// setup jwt
+var jwtSecret = 'i3oifjda9302lr$#@05.';
+app.use(expressJwt({ secret: jwtSecret}).unless({path: ['/login']}));
 
 // setup passport
 passport.use(new LocalStrategy(function(username, password, done) {
@@ -64,12 +68,14 @@ app.get('/random-user', checkAuthenticated, function(req, res) {
 });
 
 app.post('/login', passport.authenticate('local'), function(req, res) {
-  res.json(req.user);
-});
+  var token = jwt.sign({
+    username: req.user.username
+  }, jwtSecret);
 
-app.get('/logout', checkAuthenticated, function(req, res) {
-  req.logout();
-  res.json({ success: true });
+  res.json({
+    token: token,
+    user: user
+  });
 });
 
 app.get('/me', checkAuthenticated, function(req, res) {
@@ -86,6 +92,6 @@ function checkAuthenticated(req, res, next) {
   if (req.user) {
     next();
   } else {
-    res.status(403).end('Must be authenticated');
+    res.status(401).end('Must be authenticated');
   }
 }

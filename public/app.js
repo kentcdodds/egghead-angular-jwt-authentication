@@ -1,6 +1,9 @@
 (function() {
   'use strict';
-  var app = angular.module('app', []);
+  var app = angular.module('app', [], function config($httpProvider) {
+    $httpProvider.interceptors.push('AuthInterceptor');
+  });
+  app.constant('API_URL', 'http://localhost:3000');
   app.controller('MainCtrl', function MainCtrl(UserFactory, RandomUserFactory) {
     'use strict';
     var vm = this;
@@ -18,7 +21,7 @@
     // View Model functions
     function login(username, password) {
       UserFactory.login(username, password).then(function(response) {
-        vm.user = response.data;
+        vm.user = response.data.user;
       }, handleError);
     }
 
@@ -40,7 +43,7 @@
     }
   });
 
-  app.factory('UserFactory', function LoginFactory($http) {
+  app.factory('UserFactory', function LoginFactory($http, API_URL, AuthTokenFactory) {
     'use strict';
     return {
       getUser: getUser,
@@ -49,29 +52,79 @@
     };
 
     function getUser() {
-      return $http.get('/me');
+      return $http.get(API_URL + '/me');
     }
 
     function login(username, password) {
-      return $http.post('/login', {
+      var loginInfo = {
         username: username,
         password: password
+      };
+      return $http.post(API_URL + '/login', loginInfo).then(function(response) {
+        AuthTokenFactory.setToken(response.data.token);
+        return response;
       });
     }
 
     function logout() {
-      return $http.get('/logout');
+      return AuthTokenFactory.setToken();
     }
   });
 
-  app.factory('RandomUserFactory', function RandomUserFactory($http) {
+  app.factory('RandomUserFactory', function RandomUserFactory($http, API_URL) {
     'use strict';
     return {
       getRandomUser: getRandomUser
     };
 
     function getRandomUser() {
-      return $http.get('/random-user');
+      return $http.get(API_URL + '/random-user');
+    }
+  });
+  
+  app.factory('AuthTokenFactory', function AuthTokenFactory($window) {
+    'use strict';
+    var tokenKey = 'auth-token';
+    var store = $window.localStorage;
+    return {
+      getToken: getToken,
+      setToken: setToken
+    };
+
+    function getToken() {
+      return store.getItem(tokenKey);
+    }
+
+    function setToken(token) {
+      if (token) {
+        store.setItem(tokenKey, token);
+      } else {
+        store.removeItem(tokenKey);
+      }
+    }
+  });
+
+  app.factory('AuthInterceptor', function AuthInterceptor(AuthTokenFactory) {
+    'use strict';
+    return {
+      request: addAuthToken,
+      response: handleUnauthenticated
+    };
+
+    function addAuthToken(config) {
+      var token = AuthTokenFactory.getToken();
+      if (token) {
+        config.headers = config.headers || {};
+        config.headers.Authorization = 'Bearer ' + token;
+      }
+      return config;
+    }
+
+    function handleUnauthenticated(response) {
+      if (response.status === 403) {
+        console.warn('Not authorized');
+      }
+      return response;
     }
   });
 })();
