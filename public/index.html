@@ -18,6 +18,9 @@
 </div>
 
 <div ng-show="vm.user">
+  <h2>Welcome {{vm.user.username}}</h2>
+  <button type="button" ng-click="vm.logout()">Logout</button>
+  <hr />
   <button type="button" ng-click="vm.getRandomUser()">Get Random User</button>
   <div style="margin-top:14px;">
     <img ng-src="{{vm.randomUser.avatar}}" />

@@ -45,6 +45,10 @@ app.get('/random-user', function(req, res) {
   res.json(user);
 });
 
+app.get('/me', function(req, res) {
+  res.json(req.user);
+});
+
 app.listen(3000, function() {
   console.log('App listening on localhost:3000');
 });

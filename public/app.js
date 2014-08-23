@@ -13,13 +13,24 @@
 
     // assignment
     vm.login = login;
+    vm.logout = logout;
     vm.getRandomUser = getRandomUser;
+
+    // initialization
+    UserFactory.getUser().then(function(response) {
+      vm.user = response.data;
+    });
 
     // View Model functions
     function login(username, password) {
       UserFactory.login(username, password).then(function(response) {
         vm.user = response.data.user;
       }, handleError);
+    }
+
+    function logout() {
+      vm.user = null;
+      UserFactory.logout();
     }
 
     function getRandomUser() {
@@ -46,11 +57,22 @@
     }
   });
 
-  app.factory('UserFactory', function LoginFactory($http, API_URL, AuthTokenFactory) {
+  app.factory('UserFactory', function LoginFactory($http, API_URL, AuthTokenFactory, $q) {
     'use strict';
     return {
-      login: login
+      getUser: getUser,
+      login: login,
+      logout: logout
     };
+
+    function getUser() {
+      var token = AuthTokenFactory.getToken();
+      if (token) {
+        return $http.get(API_URL + '/me');
+      } else {
+        return $q.reject({ data: 'Client has no authentication token.' });
+      }
+    }
 
     function login(username, password) {
       var loginInfo = {
@@ -61,6 +83,10 @@
         AuthTokenFactory.setToken(response.data.token);
         return response;
       });
+    }
+
+    function logout() {
+      AuthTokenFactory.setToken();
     }
   });
 
