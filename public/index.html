@@ -9,6 +9,15 @@
 <h1>Get Random User Info</h1>
 
 <div>
+  <h2>Login</h2>
+  <form ng-submit="vm.login(vm.username, vm.password)">
+    <label>Username: <input type="text" ng-model="vm.username" /></label><br />
+    <label>Password: <input type="password" ng-model="vm.password" /></label><br />
+    <button type="submit">Login</button>
+  </form>
+</div>
+
+<div>
   <button type="button" ng-click="vm.getRandomUser()">Get Random User</button>
   <div style="margin-top:14px;">
     <img ng-src="{{vm.randomUser.avatar}}" />

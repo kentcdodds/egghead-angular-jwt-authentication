@@ -4,7 +4,11 @@
   "description": "jwt auth with angular",
   "main": "server.js",
   "dependencies": {
+    "body-parser": "^1.6.5",
+    "cors": "^2.4.1",
     "express": "^4.8.5",
-    "faker": "^1.1.0"
+    "express-jwt": "^0.3.1",
+    "faker": "^1.1.0",
+    "jsonwebtoken": "^0.4.1"
   }
 }
