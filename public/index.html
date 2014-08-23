@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>Angular JWT Auth</title>
+</head>
+<body ng-controller="MainCtrl as vm">
+
+<h1>Get Random User Info</h1>
+
+<div>
+  <button type="button" ng-click="vm.getRandomUser()">Get Random User</button>
+  <div style="margin-top:14px;">
+    <img ng-src="{{vm.randomUser.avatar}}" />
+    <pre ng-bind="vm.randomUser | json"></pre>
+  </div>
+</div>
+
+<script type="text/javascript" src="bower_components/angular/angular.js"></script>
+<script type="text/javascript" src="app.js"></script>
+</body>
+</html>

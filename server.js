@@ -3,6 +3,11 @@ var faker = require('faker');
 
 var app = express();
 
+var cors = require('cors');
+
+// setup cors
+app.use(cors());
+
 app.get('/random-user', function(req, res) {
   var user = faker.Helpers.userCard();
   user.avatar = faker.Image.avatar();
