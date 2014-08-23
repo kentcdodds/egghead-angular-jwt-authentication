@@ -1,0 +1,10 @@
+{
+  "name": "egghead-angular-jwt-authentication",
+  "version": "0.0.0",
+  "description": "jwt auth with angular",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.8.5",
+    "faker": "^1.1.0"
+  }
+}
